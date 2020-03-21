@@ -1,13 +1,23 @@
 package logging
 
+
 import (
-	"os"
 	"github.com/sirupsen/logrus"
+	"os"
 )
+
+const (
+	FATAL = "Fatal"
+	INFO = "Info"
+	WARN = "Warn"
+)
+
 
 var Logger = logrus.New()
 
+
 func init() {
+
 	Logger.SetOutput(os.Stdout)
 
 	logLevel, err := logrus.ParseLevel(os.Getenv("LOG_LEVEL"))
@@ -17,7 +27,6 @@ func init() {
 	}
 
 	Logger.SetLevel(logLevel)
-	Logger.Formatter = &logrus.TextFormatter{ForceColors: true, FullTimestamp: true}
+	Logger.Formatter = &logrus.TextFormatter{ForceColors: false, FullTimestamp: true}
 }
-
 
