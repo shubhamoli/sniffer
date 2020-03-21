@@ -7,10 +7,27 @@ import (
 	"io/ioutil"
 	"os"
 	"path/filepath"
+	log "internal/logging"
 )
 
 
-// Config structure of yaml file
+// Global variable to be imported in another packages
+// see: slack.go
+var (
+	Configuration Config
+)
+
+func init(){
+	c, err := GetConfig()
+	if err != nil {
+		log.Logger.Fatal("No config found!")
+	}
+
+	Configuration = *c
+}
+
+
+// Config structure for yaml file
 type Config struct {
 	Global      Global
 	Sniff       []EntityToSniff
@@ -22,15 +39,8 @@ type Global struct {
 
 type Notifiers struct {
 	Type        string
-	Smtp		SmtpConfig `yaml:",omitempty"`
+	Sns_arn		string  `yaml:",omitempty"`
 	Webhook_url string  `yaml:",omitempty"`
-}
-
-type SmtpConfig struct {
-	Host		string
-	Username	string
-	Password	string
-	From		string
 }
 
 type EntityToSniff struct {
@@ -38,26 +48,19 @@ type EntityToSniff struct {
 	Threshold	int
 	Frequency	int
 	Realert		int
-	Alert		Alert
+	Notify		[]string
 }
-
-type Alert struct {
-	Notify		[]Notify
-}
-
-type Notify struct {
-	Notifier	string
-	Group		string
-}
-
 
 
 func GetConfig() (*Config, error) {
 	c := &Config{}
 
-	fileName := "config.yml"
-	configDir, err := filepath.Abs("src/tests")
-	configFile, err := os.Open(filepath.Join(configDir, fileName))
+	configFilePath := os.Getenv("CONFIG_PATH")
+	if configFilePath == "" {
+		configFilePath = "."
+	}
+	configFilePathAbs, _ := filepath.Abs(filepath.Join(configFilePath, "config.yml"))
+	configFile, err := os.Open(configFilePathAbs);
 	defer configFile.Close()
 
 	if err != nil{
@@ -72,7 +75,7 @@ func GetConfig() (*Config, error) {
 	if len(conf) != 0 {
 		err := yaml.Unmarshal(conf, c)
 		if err != nil {
-			return c, errors.New("Invalid Config File") 
+			return c, errors.New("Unable to Parse Config File")
 		}
 	}
 
