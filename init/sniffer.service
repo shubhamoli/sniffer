@@ -1,0 +1,21 @@
+[Unit]
+Description=Sniffer Service to monitor system resources
+After=network.target
+ 
+[Service]
+Type=simple
+DynamicUser=yes
+
+Restart=on-failure
+RestartSec=5
+startLimitIntervalSec=60
+ExecStart=/usr/local/bin/sniffer
+PermissionsStartOnly=true
+StandardOutput=syslog
+StandardError=syslog
+SyslogIdentifier=sniffer
+
+Environment=CONFIG_PATH=/etc/sniffer/
+ 
+[Install]
+WantedBy=multi-user.target
