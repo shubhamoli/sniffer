@@ -1,2 +1,4 @@
 github.com/
 gopkg.in/
+config.yml
+cmd/sniffer/sniffer
