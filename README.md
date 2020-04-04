@@ -12,7 +12,7 @@ Sniffer is a binary which monitors CPU, Disk and Memory usage of any node. Every
 ```
 $ git clone https://github.com/shubhamoli/sniffer
 $ cd sniffer
-$ go get ./...
+$ dep ensure
 $ export CONFIG_PATH=/path/to/config
 $ go run cmd/sniffer/main.go
 ```
