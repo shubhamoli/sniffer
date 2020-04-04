@@ -1,5 +1,6 @@
 package main
 
+
 import (
 	"fmt"
 	log "internal/logging"
@@ -7,19 +8,17 @@ import (
 	"internal/watcher"
 )
 
-func info(msg...string){
-	log.Logger.Info(msg)
-}
 
 func main() {
-	info("Starting Sniffer...")
+	log.Logger.Info("Starting Sniffer...")
 
 	Config, err := config.GetConfig()
 	if err != nil {
 		log.Logger.Fatal(fmt.Sprintf("Error in loading Configuration. Error: %s", err.Error()))
 	}
 
-	info(fmt.Sprintf("Sniffing %d items", len(Config.Sniff)))
+	log.Logger.Info(fmt.Sprintf("Sniffing %d items", len(Config.Sniff)))
+
 	for _, item := range Config.Sniff {
 		watcher.Setup(item)
 	}
